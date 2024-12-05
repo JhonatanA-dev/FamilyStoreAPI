@@ -2,12 +2,13 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { TaskUseCase } from "../useCases/task.usecase";
 import { TaskCreate, TaskUpdate } from "../interfaces/task.interface";
 import { prisma } from "../dataBase/prisma.client";
+import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 export async function TaskRouter(app: FastifyInstance) {
 
     const taskUseCase = new TaskUseCase()
 
-    app.post<{ Body: TaskCreate, }>('/task', async (req, reply) => {
+    app.post<{ Body: TaskCreate, }>('/task',{preHandler:isAuthenticated}, async (req, reply) => {
         const { title,description,date,difficulty,taskStatus,childId} = req.body;
         
         try {
@@ -26,7 +27,7 @@ export async function TaskRouter(app: FastifyInstance) {
         }
       });
 
-    app.put<{ Body: TaskUpdate }>('/task', async (req, reply) => {
+    app.put<{ Body: TaskUpdate }>('/task', {preHandler:isAuthenticated} ,async (req, reply) => {
     
       const { id ,title,description,date,difficulty,taskStatus} = req.body;
       try {
@@ -37,38 +38,46 @@ export async function TaskRouter(app: FastifyInstance) {
       } catch (error) {
         reply.send(error);
       }
-    });
-
-    app.delete<{ Params: { id: string } }>('/task/:id', async (req, reply) => {
+    });  
+    app.get<{ Params: { id: string } }>('/task/:id',{preHandler:isAuthenticated}, async (req, reply) => {
         const { id } = req.params;
-        try {
-          const data = await taskUseCase.delete(id);
-          return reply.send(data);
-        } catch (error) {
-          reply.send(error);    
-        }
-      });
-
-      
-    app.get<{ Params: { childId: string } }>('/task/:childId', async (req, reply) => {
-        const { childId } = req.params;
       try {
-        const data = await taskUseCase.findByTaskList(childId);
+        const data = await taskUseCase.findByTaskList(id);
         return reply.send(data);
       } catch (error) {
         reply.send(error);
       }
     });
     
-    app.get<{ Params: { taskId: string }}>('/taskAnalysis/:taskId', async (req, reply) => {
-      const { taskId } = req.params;
-    try {
-      const data = await taskUseCase.findByIdTaskAnalysis(taskId)
+    app.get<{ Params: { id: string }}>('/taskAnalysis/:id',{preHandler:isAuthenticated}, async (req, reply) => {
+      const { id } = req.params;  
+      try {
+        const data = await taskUseCase.findByIdTaskAnalysis(id)
 
-      //verificar se a tarefa foi concluida ou esta atrasado
+        return reply.send(data);
+      } catch (error) {
+        reply.send(error);
+      }
+    });
+
+    app.get<{ Params: { id: string }}>('/tasksAnalysisList/:id',{preHandler:isAuthenticated}, async (req, reply) => {
+      const { id } = req.params;
+      try {
+        const data = await taskUseCase.findByChildIdTaskAnalysis(id)
+
+        return reply.send(data);
+      } catch (error) {
+        reply.send(error);
+      }
+    });
+
+  app.delete<{ Params: { id: string } }>('/task/:id',{preHandler:isAuthenticated}, async (req, reply) => {
+    const { id } = req.params;
+    try {
+      const data = await taskUseCase.delete(id);
       return reply.send(data);
     } catch (error) {
-      reply.send(error);
+      reply.send(error);    
     }
   });
    

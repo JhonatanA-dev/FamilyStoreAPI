@@ -27,6 +27,8 @@ export class TaskRepositoryDb implements TaskRepository {
                 childId,
             },   
         })
+        console.log(list);
+        
         return list;
     }
 

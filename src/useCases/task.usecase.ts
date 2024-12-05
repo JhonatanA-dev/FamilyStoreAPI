@@ -47,18 +47,8 @@ class TaskUseCase {
         
         return taskCreated;
     }
-    async findById(id: string): Promise<Task | null> {
 
-        // Verifica se a tarefa existe
-        const task = await this.taskRepository.findById(id);
-        if (!task) {
-            throw new Error("Task not found");
-        }
-
-        return task || null;
-    }
-    
-    async findByTaskList(childId: string): Promise<TaskArrayList> {
+    async findByTaskList(childId: string): Promise<TaskArrayList >{
 
         // Verifica se a lista de tarefas existe
         const tasks = await this.taskRepository.findByTaskList(childId);
@@ -68,8 +58,8 @@ class TaskUseCase {
 
         // Organiza a lista
         const list = organizeTaskList(tasks)
-
-        return list;
+                 
+        return list
     }
 
     async update(task: TaskUpdate): Promise<Task> {
@@ -83,6 +73,20 @@ class TaskUseCase {
         return taskUpdated;
     }
 
+    // const taskList = []
+
+    // for (let i = 0; i < tasks.length; i++) {
+    //     const element = tasks[i];
+    //     if (element.childId === childId) {
+    //         taskList.push(element)
+
+    //     }
+        
+    // }
+    // console.log(taskList);
+
+
+    
     async delete(id: string): Promise<{message: string}> {
         // Verifica se a tarefa existe
         const verifyTask = await this.taskRepository.findById(id);
@@ -105,6 +109,29 @@ class TaskUseCase {
             return tasks || null
         }
          return { message: "Task not completed" }
+    }
+    async findByChildIdTaskAnalysis(childId: string): Promise<TaskList[]> {
+
+
+        // Verifica se a lista de tarefas existe
+        const child = await this.taskRepository.findByTaskList(childId);
+        if (!child) {
+            throw new Error("Task List not found");
+        }
+        const tasks = [];
+        
+        for (let i = 0; i < child.length; i++) {
+            const task = child[i];
+            if(task.taskStatus === "completed" || task.taskStatus === "notCompleted" && task.childId === childId) {
+                if(task.childId === childId) {
+                    tasks.push(task)
+                }
+            }
+        }
+        if (!tasks[0]) {
+            throw new Error("Task List not found");
+        }
+        return tasks 
     }
 }
 export{ TaskUseCase }

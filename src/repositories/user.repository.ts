@@ -5,19 +5,11 @@ export class UserRepositoryDb implements UserRepository {
 
 
     async create(user: UserCreate): Promise<User> {
-        const userCreated =await prisma.user.create({
+        const userCreated = await prisma.user.create({
             data: user,
         }); 
         
         return userCreated;
-    }
-    async findById(id: string): Promise<User | null> {
-        const userFindById = await prisma.user.findUnique({
-            where: {
-                id,
-            },
-        });
-        return userFindById || null;
     }
     async findByEmail(email: string): Promise<User | null> {
         const userFindByEmail = await prisma.user.findUnique({

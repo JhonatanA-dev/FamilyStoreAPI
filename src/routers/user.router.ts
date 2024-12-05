@@ -1,27 +1,39 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { UserUseCase } from "../useCases/user.usecase";
-import { UserCreate, UserUpdate } from "../interfaces/user.interface";
+import { UserCreate, UserLogin, UserUpdate } from "../interfaces/user.interface";
 import { prisma } from "../dataBase/prisma.client";
+import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { User } from "@prisma/client";
+import { log } from "console";
 
 export async function UserRouter(app: FastifyInstance) {
 
     const userUseCase = new UserUseCase()
 
-    app.post<{ Body: UserCreate }>('/user', async (req, reply) => {
+    app.post<{ Body: UserCreate }>('/signup', async (req, reply) => {
         const { name, email, password} = req.body;
         try {
-          const data = await userUseCase.create({
+          const created = await userUseCase.create({
             name,
             email,
             password,
           });
-          return reply.send(data);
+          return reply.send(created);
         } catch (error) {
           reply.send(error);
         }
       });
 
-      app.put<{ Body: UserUpdate }>('/user', async (req, reply) => {
+      app.post<{ Body: UserLogin }>('/signin', async (req, reply) => {
+        const { email, password} = req.body;
+        try {
+          const token = await userUseCase.login({email,password});
+          return reply.send(token);
+        } catch (error) {
+          reply.send(error);
+        }
+      });
+      app.put<{ Body: UserUpdate }>('/editProfile', async (req, reply) => {
 
         const { id, name, email, password } = req.body;
         try {
@@ -37,11 +49,17 @@ export async function UserRouter(app: FastifyInstance) {
         }
       });
       
-      app.get<{ Params: { id: string }}>('/user/:id', async (req, reply) => {
-        const { id } = req.params;
+      app.get<{Params:{email:string}}>('/user',{preHandler:isAuthenticated}, async (req, reply) => {
+        const {email} = req.params 
         try {
-          const data = await userUseCase.findById(id);
-          return reply.send(data);
+          if (email == undefined) {
+            throw Error("Usuario não autorisado ")
+          }
+          const user = await userUseCase.findByEmail(email);
+      
+          return reply.send(user);
+      
+
         } catch (error) {
           reply.send(error);
         }

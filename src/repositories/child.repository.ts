@@ -8,10 +8,11 @@ export class ChildRepositoryDb implements ChildRepository {
         const childCreated = await prisma.children.create({
             data: child,
         });
-        
         return childCreated;
     }
     async findById(id: string): Promise<Child | null> {
+        console.log(id);
+        
         const childFindByid = await prisma.children.findUnique({
             where: {
                 id,
