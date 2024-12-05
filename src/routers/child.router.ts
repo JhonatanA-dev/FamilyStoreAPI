@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { ChildCreate, ChildUpdate } from "../interfaces/child.interface";
+import { ChildCreate, ChildCreateUseCase, ChildLogin, ChildUpdate } from "../interfaces/child.interface";
 import { ChildUseCase } from "../useCases/child.usecase";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 
@@ -7,32 +7,42 @@ export async function ChildRouter(app: FastifyInstance) {
 
     const childUseCase = new ChildUseCase()
 
-      app.post<{ Body: ChildCreate }>('/children',{preHandler:isAuthenticated}, async (req, reply) => {
+      app.post<{  Params:{email:string} ,Body: ChildCreateUseCase }>('/children/signup',{preHandler:isAuthenticated}, async (req, reply) => {
 
-          const {  name,age,level,userId} = req.body;
+          const { name,age,password} = req.body;
+          const { email } = req.params;
           try {
 
-            const data = await childUseCase.create({name,age,level,userId});
+            const data = await childUseCase.create({name,age,password},email);
             return reply.send(data);
 
           } catch (error) {
             reply.send(error);
           }
       });
+      app.post<{ Body: ChildLogin }>('/children/signin', async (req, reply) => {
+        const { name, password} = req.body;
+        try {
+          const token = await childUseCase.login({name,password});
+          return reply.send(token);
+        } catch (error) {
+          reply.send(error);
+        }
+      });
       app.put<{Body: ChildUpdate }>('/children',{preHandler:isAuthenticated}, async (req, reply) => {
 
-        const { id , name, age, level } = req.body;
+        const { id ,age, password } = req.body;
 
         try {
-          const data = await childUseCase.update({id, name, age, level});
+          const data = await childUseCase.update({ id, age ,password});
           return reply.send(data);
         } catch (error) {
           reply.send(error);
         }
       });
-      app.get<{ Params: { email: string }}>('/children',{preHandler:isAuthenticated}, async (req, reply) => {
+      app.get<{ Params: { email: string }}>('/childrenList',{preHandler:isAuthenticated}, async (req, reply) => {
         const { email } = req.params;
-        
+  
         try {
           const data = await childUseCase.findByParents(email);
           return reply.send(data);
@@ -40,11 +50,18 @@ export async function ChildRouter(app: FastifyInstance) {
           reply.send(error);
         }
       });
+      app.get<{ Params: { name: string }}>('/children',{preHandler:isAuthenticated}, async (req, reply) => {
+        const { name } = req.params;
+  
+        try {
+          const data = await childUseCase.findByName(name);
+          return reply.send(data);
+        } catch (error) {
+          reply.send(error);
+        }
+      });
       app.delete<{ Params: { id: string }}>('/children/:id',{preHandler:isAuthenticated}, async (req, reply) => {
         const { id } = req.params;
-        if (!id) {
-          throw new Error('Id não informado');
-        }
         try {
  
           const data = await childUseCase.delete(id);

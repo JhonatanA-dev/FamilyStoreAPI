@@ -24,6 +24,7 @@ export interface TaskUpdate {
     date?: string;
     difficulty?: number;
     taskStatus?: string;
+    childId?: string;
 }
 
 export interface TaskList {

@@ -3,134 +3,108 @@ import { Child, ChildCreate, ChildRepository, ChildUpdate } from "../interfaces/
 import { TaskRepositoryDb } from "../repositories/task.repository";
 import { ChildRepositoryDb } from "../repositories/child.repository";
 import { organizeTaskList } from "../scripts/organizeTaskList";
+import { verifyDifficultyAndTaskStatus } from "../scripts/verifyDifficultyAndTaskStatus";
 
 class TaskUseCase {
-    private taskRepository: TaskRepository
-    private childRepository: ChildRepository
+    private taskRepository: TaskRepository;
+    private childRepository: ChildRepository;
     constructor() {
         this.taskRepository = new TaskRepositoryDb();
         this.childRepository = new ChildRepositoryDb();
     }
-    async create(data: TaskCreate): Promise<Task> {
 
-        const task = {
-            title: data.title,
-            description: data.description,
-            date:data.date,
-            difficulty: data.difficulty,
-            taskStatus: data.taskStatus,
-            childId: data.childId,
-        }
 
+    async create(email:string,data: TaskCreate): Promise<Task> {
+    
+        if(!email) throw new Error("Usuario não autorizado");
+        
+        
+        // Validação dos dados
+        if (!data.title || !data.description || !data.date || !data.difficulty || !data.taskStatus || !data.childId) {
+            throw new Error("Dados invalidos")};
+        
         // Verifica se o filho existe
-        const verifyChild = await this.childRepository.findById(data.childId)
-        if(!verifyChild){
-            throw new Error("Child not found")
-        }
+        const verifyChild = await this.childRepository.findById(data.childId);
+        if(!verifyChild) throw new Error("Filho não encontrado");
 
-        // Verifica se a dificuldade é valida
-        const verifyDifficultyList = [1,2,3]
-        const verifyDifficulty = verifyDifficultyList.find(item => item === task.difficulty)
-        if(!verifyDifficulty){
-            throw new Error("Difficulty not found options: 1 --> Facio, 2 -->Normal, 3 --> Dificil")
-        }
-
-        // Verifica se o status é valido
-        const verifyTaskStatusList = [ "toDo","inProgress","completed","notCompleted"]
-        const verifyTaskStatus = verifyTaskStatusList.find(item => item === task.taskStatus)
-        if(!verifyTaskStatus){
-            throw new Error("TaskStatus not found options: toDO, inProgress, completed, notCompleted")
-        }
-
-        // Cria a tarefa
-        const taskCreated = await this.taskRepository.create(task);
+        // Verifica se a dificuldade e o status da tarefa são válidos
+        verifyDifficultyAndTaskStatus(data.difficulty,data.taskStatus);
+        
+        const taskCreated = await this.taskRepository.create(data);
+        if (!taskCreated) throw new Error("Erro ao criar tarefa");
         
         return taskCreated;
     }
 
     async findByTaskList(childId: string): Promise<TaskArrayList >{
-
+        if (!childId) throw new Error("Id do filho não informado");
+     
+        // Verifica se o filho existe
+        const childExists = await this.childRepository.findById(childId);
+        if (!childExists) throw new Error("Child not found");
+        
         // Verifica se a lista de tarefas existe
         const tasks = await this.taskRepository.findByTaskList(childId);
-        if (!tasks) {
-            throw new Error("Task List not found");
-        }
+        if (!tasks)  throw new Error("Lista de tarefas não encontrada");
 
-        // Organiza a lista
-        const list = organizeTaskList(tasks)
-                 
-        return list
+
+        // Organiza a lista   aquivo do script/organizeTaskList.ts 
+        const list = organizeTaskList(tasks);
+    
+        return list;
     }
 
-    async update(task: TaskUpdate): Promise<Task> {
+    async update(email:string,task: TaskUpdate): Promise<Task> {
+  
+        if(!email) throw new Error("Usuario não autorizado");
+        
+        // Validação dos dados
+        if(!task.id) throw new Error("Dados invalidos");
+        
         // Verifica se a tarefa existe
         const verifyTask = await this.taskRepository.findById(task.id);
-        if(!verifyTask){
-            throw new Error("Task not found")
-        }
+        if(!verifyTask) throw new Error("Task not found");
+
+        // Verifica se a dificuldade e o status da tarefa são válidos
+        if(task.difficulty || task.taskStatus) verifyDifficultyAndTaskStatus(task.difficulty,task.taskStatus);
+
         // Atualiza a tarefa
         const taskUpdated = await this.taskRepository.update(task);
         return taskUpdated;
     }
-
-    // const taskList = []
-
-    // for (let i = 0; i < tasks.length; i++) {
-    //     const element = tasks[i];
-    //     if (element.childId === childId) {
-    //         taskList.push(element)
-
-    //     }
-        
-    // }
-    // console.log(taskList);
-
-
     
     async delete(id: string): Promise<{message: string}> {
-        // Verifica se a tarefa existe
+
+        // Busca a lista de tarefas pelo id da tarefa
         const verifyTask = await this.taskRepository.findById(id);
-        if(!verifyTask){
-            throw new Error("Task not found")
-        }
-        // Deleta a tarefa
+        if(!verifyTask) throw new Error("Tarefa não encontrada");
+        
         await this.taskRepository.delete(id);
 
-        return  {message :'Task deleted successfully'}
+        return  {message :'Tarefa deletada com sucesso'}
     }
+
     async findByIdTaskAnalysis(taskId: string): Promise<Task | {message: string} > {
 
-        // Verifica se a lista de tarefas existe
+        // Busca a lista de tarefas pelo id da tarefa
         const tasks = await this.taskRepository.findById(taskId);
-        if (!tasks) {
-            throw new Error("Task List not found");
-        }
-        if (tasks.taskStatus === "completed" || tasks.taskStatus === "notCompleted") {
-            return tasks || null
-        }
-         return { message: "Task not completed" }
+        if (!tasks) throw new Error("Lista de tarefas não encontrada");
+        
+        if (tasks.taskStatus === "completed" || tasks.taskStatus === "notCompleted") return tasks || null;
+
+        return { message: "Tarefa não concluida" };
     }
+
     async findByChildIdTaskAnalysis(childId: string): Promise<TaskList[]> {
 
-
-        // Verifica se a lista de tarefas existe
+        // Busca a lista de tarefas do filho
         const child = await this.taskRepository.findByTaskList(childId);
-        if (!child) {
-            throw new Error("Task List not found");
-        }
-        const tasks = [];
+        if (!child) throw new Error("Lista de tarefas não encontrada");
         
-        for (let i = 0; i < child.length; i++) {
-            const task = child[i];
-            if(task.taskStatus === "completed" || task.taskStatus === "notCompleted" && task.childId === childId) {
-                if(task.childId === childId) {
-                    tasks.push(task)
-                }
-            }
-        }
-        if (!tasks[0]) {
-            throw new Error("Task List not found");
-        }
+        // Cria uma lista com as tarefas concluidas ou não concluidas
+        const tasks  = child.filter((task) => task.taskStatus === "completed" || task.taskStatus === "notCompleted");
+        if (!tasks[0]) throw new Error("Lista de tarefas não encontrada");
+        
         return tasks 
     }
 }

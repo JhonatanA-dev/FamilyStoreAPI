@@ -16,10 +16,9 @@ export interface UserLogin{
 }
 
 export interface UserUpdate {
-    id: string;
-    name: string;
+    name?: string;
     email: string;
-    password: string;
+    password?: string;
 }
  export interface UserRepository {
     create(user: UserCreate): Promise<User>;

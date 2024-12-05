@@ -1,5 +1,6 @@
 export interface ChildCreate {
     name: string;
+    password: string;
     age: number;
     level: number;
     userId: string;
@@ -7,15 +8,23 @@ export interface ChildCreate {
 export interface Child{
     id: string;
     name: string;
+    password: string;
     age: number;
     level: number;
 }
-
+export interface ChildCreateUseCase {
+    name: string;
+    password: string;
+    age: number;
+}
+export interface ChildLogin{
+    name: string;
+    password: string;
+}
 export interface ChildUpdate {
     id: string;
-    name?: string;
     age?: number;
-    level?: number;
+    password?: string;
 }
 export interface ChildList {
     name: string;
@@ -27,6 +36,7 @@ export interface ChildList {
  export interface ChildRepository {
     create(child: ChildCreate): Promise<Child>;
     findById(id: string): Promise<Child | null>;
+    findByName(name: string): Promise<Child | null>;
     findByParents(userId: string): Promise<Child[] | null>;
     update(child: ChildUpdate): Promise<Child>;
     delete(id: string): Promise<void>;

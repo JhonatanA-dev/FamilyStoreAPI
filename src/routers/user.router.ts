@@ -10,7 +10,7 @@ export async function UserRouter(app: FastifyInstance) {
 
     const userUseCase = new UserUseCase()
 
-    app.post<{ Body: UserCreate }>('/signup', async (req, reply) => {
+    app.post<{ Body: UserCreate }>('/user/signup', async (req, reply) => {
         const { name, email, password} = req.body;
         try {
           const created = await userUseCase.create({
@@ -24,7 +24,7 @@ export async function UserRouter(app: FastifyInstance) {
         }
       });
 
-      app.post<{ Body: UserLogin }>('/signin', async (req, reply) => {
+      app.post<{ Body: UserLogin }>('/user/signin', async (req, reply) => {
         const { email, password} = req.body;
         try {
           const token = await userUseCase.login({email,password});
@@ -33,12 +33,12 @@ export async function UserRouter(app: FastifyInstance) {
           reply.send(error);
         }
       });
-      app.put<{ Body: UserUpdate }>('/editProfile', async (req, reply) => {
+      app.put<{Params:{email:string} ,Body: UserUpdate }>('/user/editProfile',{preHandler:isAuthenticated}, async (req, reply) => {
 
-        const { id, name, email, password } = req.body;
+        const { name, password } = req.body;
+        const { email }= req.params
         try {
           const data = await userUseCase.update({
-            id, 
             name,
             email,
             password,
