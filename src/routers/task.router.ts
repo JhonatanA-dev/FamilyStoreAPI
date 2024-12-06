@@ -1,7 +1,6 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyInstance} from "fastify";
 import { TaskUseCase } from "../useCases/task.usecase";
 import { TaskCreate, TaskUpdate } from "../interfaces/task.interface";
-import { prisma } from "../dataBase/prisma.client";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 export async function TaskRouter(app: FastifyInstance) {
@@ -49,28 +48,6 @@ export async function TaskRouter(app: FastifyInstance) {
       }
     });
     
-    
-    app.get<{ Params: { id: string }}>('/taskAnalysis/:id',{preHandler:isAuthenticated}, async (req, reply) => {
-      const { id } = req.params;  
-      try {
-        const data = await taskUseCase.findByIdTaskAnalysis(id)
-
-        return reply.send(data);
-      } catch (error) {
-        reply.send(error);
-      }
-    });
-
-    app.get<{ Params: { id: string }}>('/tasksAnalysisList/:id',{preHandler:isAuthenticated}, async (req, reply) => {
-      const { id } = req.params;
-      try {
-        const data = await taskUseCase.findByChildIdTaskAnalysis(id)
-        return reply.send(data);
-      } catch (error) {
-        reply.send(error);
-      }
-    });
-
   app.delete<{ Params: { id: string } }>('/task/:id',{preHandler:isAuthenticated}, async (req, reply) => {
     const { id } = req.params;
     try {
