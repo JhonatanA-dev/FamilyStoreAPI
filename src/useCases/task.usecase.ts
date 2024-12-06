@@ -3,8 +3,8 @@ import { ChildRepository} from "../interfaces/child.interface";
 import { TaskRepositoryDb } from "../repositories/task.repository";
 import { ChildRepositoryDb } from "../repositories/child.repository";
 import { organizeTaskList } from "../scripts/organizeTaskList";
-import { verifyDifficultyAndTaskStatus } from "../scripts/verifyDifficultyAndTaskStatus";
-import { verifyDateTime } from "../scripts/taskDelayChecker";
+import { verifyDifficulty,verifyTaskStatus } from "../scripts/verifyDifficultyAndTaskStatus";
+import { verifyDate } from "../scripts/taskDelayChecker";
 
 class TaskUseCase {
     private taskRepository: TaskRepository;
@@ -13,13 +13,10 @@ class TaskUseCase {
         this.taskRepository = new TaskRepositoryDb();
         this.childRepository = new ChildRepositoryDb();
     }
-
-
     async create(email:string,data: TaskCreate): Promise<Task> {
     
         if(!email) throw new Error("Usuario não autorizado");
-        
-        
+
         // Validação dos dados
         if (!data.title || !data.description || !data.date || !data.difficulty || !data.taskStatus || !data.childId) {
             throw new Error("Dados invalidos")};
@@ -29,11 +26,14 @@ class TaskUseCase {
         if(!verifyChild) throw new Error("Filho não encontrado");
 
         // Verifica se a data é válida
-        verifyDateTime(data.date)
+        verifyDate(data.date)
 
-        // Verifica se a dificuldade e o status da tarefa são válidos
-        verifyDifficultyAndTaskStatus(data.difficulty,data.taskStatus);
-        
+        // Verifica se a dificuldade  da tarefa são válidos
+        verifyDifficulty(data.difficulty);
+ 
+        // Verifica se o status da tarefa são válidos
+        verifyTaskStatus(data.taskStatus);
+      
         const taskCreated = await this.taskRepository.create(data);
         if (!taskCreated) throw new Error("Erro ao criar tarefa");
         
@@ -69,15 +69,23 @@ class TaskUseCase {
         const verifyTask = await this.taskRepository.findById(task.id);
         if(!verifyTask) throw new Error("Task not found");
 
-        // Verifica se a dificuldade e o status da tarefa são válidos
-        if(task.difficulty || task.taskStatus) verifyDifficultyAndTaskStatus(task.difficulty,task.taskStatus);
+        // Verifica se a data  da tarefa é válido
+        if (task.date) {verifyDate(task.date);}
+
+        // Verifica se a dificuldade  da tarefa é válido
+        if (task.difficulty) {verifyDifficulty(task.difficulty);}
+        
+        // Verifica se o status da tarefa é válido
+        if (task.taskStatus) {verifyTaskStatus(task.taskStatus);}
 
         // Atualiza a tarefa
         const taskUpdated = await this.taskRepository.update(task);
         return taskUpdated;
     }
     
-    async delete(id: string): Promise<{message: string}> {
+    async delete(id: string,email:string): Promise<{message: string}> {
+
+        if(!email) throw new Error("Usuario não autorizado");
 
         // Busca a lista de tarefas pelo id da tarefa
         const verifyTask = await this.taskRepository.findById(id);

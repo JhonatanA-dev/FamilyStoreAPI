@@ -24,7 +24,7 @@ export async function TaskRouter(app: FastifyInstance) {
           reply.send(error);
         }
       });
-
+   
     app.put<{  Params: { email: string } , Body: TaskUpdate }>('/task', {preHandler:isAuthenticated} ,async (req, reply) => {
     
       const { id ,title,description,date,difficulty,taskStatus} = req.body;
@@ -48,14 +48,6 @@ export async function TaskRouter(app: FastifyInstance) {
       }
     });
     
-  app.delete<{ Params: { id: string } }>('/task/:id',{preHandler:isAuthenticated}, async (req, reply) => {
-    const { id } = req.params;
-    try {
-      const data = await taskUseCase.delete(id);
-      return reply.send(data);
-    } catch (error) {
-      reply.send(error);    
-    }
-  });
+
    
 }

@@ -4,6 +4,7 @@ export interface ChildCreate {
     age: number;
     level: number;
     userId: string;
+    xp: number;
 }
 export interface Child{
     id: string;
@@ -11,6 +12,7 @@ export interface Child{
     password: string;
     age: number;
     level: number;
+    xp: number;
 }
 export interface ChildCreateUseCase {
     name: string;

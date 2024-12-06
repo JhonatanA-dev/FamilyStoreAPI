@@ -22,17 +22,17 @@ interface isLevelOpReturninterface {
 
     // XP necessario para o proximo level
     let nextLevel = level + 1  
-    let xpn = nextLevel * 100    
+    let xpn = nextLevel * 1000    
 
     // Dificuldade  dependendo do level do usuario
     const percentage = add/4  //variavel de que retorna 25% do XP 
 
     let xpAdd  = 0
 
-    if (level <= 30) xpAdd = percentage*4               // level  0 até  30  100%  do valor
-    if (level <= 50 && level > 30) xpAdd = percentage*3 // level 30 até  50   75%  do valor
-    if (level <= 80 && level > 50) xpAdd = percentage*2 // level 50 até  80   50%  do valor
-    if (level <= 100 && level > 80) xpAdd = percentage  // level 80 até 100   25%  do valor
+    if (level <= 30) {xpAdd = percentage*4}               // level  0 até  30  100%  do valor
+    if (level <= 50 && level > 30) {xpAdd = percentage*3} // level 30 até  50   75%  do valor
+    if (level <= 80 && level > 50) {xpAdd = percentage*2} // level 50 até  80   50%  do valor
+    if (level <= 100 && level > 80) {xpAdd = percentage}  // level 80 até 100   25%  do valor
 
 
     // XP a ser adicionado ao banco de dados

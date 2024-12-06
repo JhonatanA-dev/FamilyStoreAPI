@@ -26,6 +26,7 @@ model Children {
   password     String
   age          Int
   level        Int
+  xp           Int
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   Task         Task []

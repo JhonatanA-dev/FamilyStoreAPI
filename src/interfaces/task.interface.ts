@@ -22,6 +22,8 @@ export interface TaskUpdate {
     title?: string;
     description?: string;
     date?: string;
+    level?: number;
+    xp?: number;
     difficulty?: number;
     taskStatus?: string;
     childId?: string;

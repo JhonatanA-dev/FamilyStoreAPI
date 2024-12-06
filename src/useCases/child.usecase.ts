@@ -1,4 +1,4 @@
-import { Child, ChildCreate, ChildCreateUseCase, ChildLogin, ChildRepository, ChildUpdate } from "../interfaces/child.interface";
+import { Child, ChildCreateUseCase, ChildLogin, ChildRepository } from "../interfaces/child.interface";
 import { TaskRepository } from "../interfaces/task.interface";
 import { UserRepository } from "../interfaces/user.interface";
 import { signChild } from "../middlewares/isAuthenticated";
@@ -33,7 +33,7 @@ class ChildUseCase {
         
         const password = await bcrypt.hash(child.password, 10);
 
-        const childUpdatedData = {name: child.name,  age: child.age,  password,  level : 1 ,  userId: userData.id};
+        const childUpdatedData = {name: child.name,  age: child.age,  password,  level : 1, xp: 0 ,  userId: userData.id};
 
         const childCreated = await this.childRepository.create(childUpdatedData);
         
@@ -84,7 +84,7 @@ class ChildUseCase {
             if (!validatePassword(child.password)) throw new Error("Dados incorretos");
             child.password = await bcrypt.hash(child.password, 10);
         }
-
+     
         // Verifica se o filho existe
         const childExists = await this.childRepository.findById(child.id);
         if (!childExists) throw new Error("Child not found");

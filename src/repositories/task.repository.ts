@@ -18,7 +18,7 @@ export class TaskRepositoryDb implements TaskRepository {
                 id,
             },
         });
-        
+    
         return taskFindById || null;
     }
     async findByTaskList(childId:string): Promise<TaskList[]> {

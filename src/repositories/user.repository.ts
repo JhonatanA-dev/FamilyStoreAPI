@@ -8,12 +8,10 @@ export class UserRepositoryDb implements UserRepository {
         const userCreated = await prisma.user.create({
             data: user,
         }); 
-        
         return userCreated;
     }
     async findByEmail(email: string): Promise<User | null> {
-        console.log(email);
-        
+       
         const userFindByEmail = await prisma.user.findUnique({
             where: {
                 email,

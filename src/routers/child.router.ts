@@ -1,12 +1,12 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { ChildCreate, ChildCreateUseCase, ChildLogin, ChildUpdate } from "../interfaces/child.interface";
+import { FastifyInstance } from "fastify";
+import { ChildCreateUseCase, ChildLogin, ChildUpdate } from "../interfaces/child.interface";
 import { ChildUseCase } from "../useCases/child.usecase";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 export async function ChildRouter(app: FastifyInstance) {
 
     const childUseCase = new ChildUseCase()
-
+   
       app.post<{  Params:{email:string} ,Body: ChildCreateUseCase }>('/children/signup',{preHandler:isAuthenticated}, async (req, reply) => {
 
           const { name,age,password} = req.body;

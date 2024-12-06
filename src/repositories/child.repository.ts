@@ -1,5 +1,5 @@
 import { prisma } from "../dataBase/prisma.client";
-import { Child, ChildCreate, ChildLogin, ChildRepository, ChildUpdate } from "../interfaces/child.interface";
+import { Child, ChildCreate, ChildRepository, ChildUpdate } from "../interfaces/child.interface";
 
 
 export class ChildRepositoryDb implements ChildRepository {
@@ -35,7 +35,7 @@ export class ChildRepositoryDb implements ChildRepository {
         });
         return childFindById || null;
     }
- 
+  
     async update(child: ChildUpdate): Promise<Child> {
         const ChildUpdated = await prisma.children.update({
             where: {

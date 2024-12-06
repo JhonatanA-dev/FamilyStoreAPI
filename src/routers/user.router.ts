@@ -1,10 +1,7 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyInstance} from "fastify";
 import { UserUseCase } from "../useCases/user.usecase";
 import { UserCreate, UserLogin, UserUpdate } from "../interfaces/user.interface";
-import { prisma } from "../dataBase/prisma.client";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
-import { User } from "@prisma/client";
-import { log } from "console";
 
 export async function UserRouter(app: FastifyInstance) {
 
