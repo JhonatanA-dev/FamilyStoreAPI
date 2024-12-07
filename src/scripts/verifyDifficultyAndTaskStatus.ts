@@ -8,3 +8,5 @@ export function verifyTaskStatus(taskStatus?: string) {
     const verifyTaskStatus = verifyTaskStatusList.find(item => item === taskStatus);
     if(!verifyTaskStatus) throw new Error("Status não encontrado opsões: toDo, inProgress, completed, notCompleted");
 }
+
+   

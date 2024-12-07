@@ -1,4 +1,4 @@
-import { Child, ChildCreateUseCase, ChildLogin, ChildRepository } from "../interfaces/child.interface";
+import { Child, ChildCreated, ChildLogin, ChildRepository, ChildUpdate } from "../interfaces/child.interface";
 import { TaskRepository } from "../interfaces/task.interface";
 import { UserRepository } from "../interfaces/user.interface";
 import { signChild } from "../middlewares/isAuthenticated";
@@ -17,7 +17,7 @@ class ChildUseCase {
         this.childRepository = new ChildRepositoryDb();
         this.userRepository = new UserRepositoryDb();
     }
-    async create(child: ChildCreateUseCase,email:string): Promise<{ created: boolean }> {
+    async create(child: ChildCreated,email:string): Promise<{ created: boolean }> {
 
         // Validação dos dados
         if (!child.name || !child.age|| !child.password ) throw new Error("Dados invalidos");
@@ -33,9 +33,19 @@ class ChildUseCase {
         
         const password = await bcrypt.hash(child.password, 10);
 
-        const childUpdatedData = {name: child.name,  age: child.age,  password,  level : 1, xp: 0 ,  userId: userData.id};
+        const childData = {
+            name: child.name, 
+            age: child.age,  
+            password, 
+            level : 1, 
+            xp: 0, 
+            coins:0 , 
+            userId: userData.id,
+            taskNotCompleted: 0,
+            taskCompleted: 0
+        };
 
-        const childCreated = await this.childRepository.create(childUpdatedData);
+        const childCreated = await this.childRepository.create(childData);
         
         if (childCreated.name === child.name)return {created:true};
         return {created:false};
@@ -62,7 +72,15 @@ class ChildUseCase {
         const childExists = await this.childRepository.findByName(childName);
         if (!childExists) throw new Error("Usuário não encontrado");
 
-        return childExists;
+        const data = {
+            id: childExists.id,
+            name: childExists.name,
+            level: childExists.level,
+            coins: childExists.coins,
+            taskNotCompleted: 0,
+            taskCompleted: 0
+        };
+        return data;
     }
     async findByParents(userEmail: string): Promise<Child[]> {
 
@@ -73,10 +91,19 @@ class ChildUseCase {
         // Verifica se os filhos existe
         const childs = await this.childRepository.findByParents(userExists.id);
         if (!childs) throw new Error("Filhos não encontrado");
-
-        return childs;
+        
+        const data = childs.map((child) => ({
+            id: child.id,
+            name: child.name,
+            level: child.level,
+            coins: child.coins,
+            taskNotCompleted: child.taskNotCompleted,
+            taskCompleted: child.taskCompleted
+        }));
+        
+        return data;
     }
-    async update(child: {id: string, age?:number,password?:string}): Promise<{updated : boolean}> {
+    async update(child: ChildUpdate): Promise<{updated : boolean}> {
         // Validação dos dados
         if (!child.id) throw new Error("Id do filho não informado ");
         

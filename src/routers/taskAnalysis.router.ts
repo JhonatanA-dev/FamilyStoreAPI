@@ -1,6 +1,7 @@
 import { FastifyInstance} from "fastify";
 import { TaskAnalysisUseCase } from "../useCases/taskAnalysis.usecase";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { TaskUserUpdate } from "../interfaces/task.interface";
 
 export async function TaskAnalysisRouter(app: FastifyInstance) {
 
@@ -17,7 +18,7 @@ export async function TaskAnalysisRouter(app: FastifyInstance) {
       }
     });
 
-    app.get<{ Params: { id: string }}>('/tasksAnalysisList/:id',{preHandler:isAuthenticated}, async (req, reply) => {
+    app.get<{ Params: { id: string }}>('/taskAnalysis/list/:id',{preHandler:isAuthenticated}, async (req, reply) => {
       const { id } = req.params;
       try {
         const data = await taskAnalysisUseCase.findByChildIdTaskAnalysis(id)
@@ -26,7 +27,7 @@ export async function TaskAnalysisRouter(app: FastifyInstance) {
         reply.send(error);
       }
     });
-    app.post<{ Params: { email: string },Body: { taskId: string }}>('/taskAnalysis/confirmedTask',{preHandler:isAuthenticated}, async (req, reply) => {
+    app.post<{ Params: { email: string },Body: { taskId: string }}>('/confirmedTask',{preHandler:isAuthenticated}, async (req, reply) => {
       const { email } = req.params;  
       const { taskId } = req.body;
       try {
@@ -38,7 +39,7 @@ export async function TaskAnalysisRouter(app: FastifyInstance) {
       }
     });
 
-    app.post<{  Params: { email: string },Body: { id: string , date:string , difficulty: 2,}}>('/taskAnalysis/redoTask',{preHandler:isAuthenticated}, async (req, reply) => {
+    app.post<{  Params: { email: string },Body: TaskUserUpdate}>('/redoTask',{preHandler:isAuthenticated}, async (req, reply) => {
       const { email } = req.params;
       const bodyData = req.body;
       try {

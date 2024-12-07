@@ -21,7 +21,8 @@ class UserUseCase {
         if (!user) {
             throw new Error("Usuario não encontrado");
         }
-        return user ;
+        const data = {id: user.id,name: user.name,email: user.email}
+        return data ;
     }
 
     async create(user: UserCreate): Promise<{created:boolean}> {
@@ -62,6 +63,7 @@ class UserUseCase {
         return {token,} ;
     }
     async update(user: UserUpdate): Promise<{updated : boolean}> {
+
         // Valida os dados
         if (!user.email)  throw new Error("Dados incompletos");
 
@@ -69,7 +71,6 @@ class UserUseCase {
             if (!validatePassword(user.password)) throw new Error("Dados incorretos");
             user.password = await bcrypt.hash(user.password, 10);
         }
-
         // Verifica se o usuário existe
         const userExists = await this.userRepository.findByEmail(user.email);
         if (!userExists) throw new Error("Usuário não encontrado");

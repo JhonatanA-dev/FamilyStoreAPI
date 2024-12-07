@@ -1,23 +1,40 @@
-export interface ChildCreate {
+export interface ChildCreated {
+    name: string;
+    password: string;
+    age: number;
+}
+export interface ChildCreatedDB {
     name: string;
     password: string;
     age: number;
     level: number;
-    userId: string;
     xp: number;
+    coins: number;
+    userId: string;
+    taskNotCompleted: number;
+    taskCompleted: number
 }
-export interface Child{
+export interface ChildDb{
     id: string;
     name: string;
     password: string;
     age: number;
     level: number;
     xp: number;
+    coins: number;
+    createdAt: Date;
+    updatedAt: Date;
+    userId: string;
+    taskNotCompleted: number;
+    taskCompleted: number
 }
-export interface ChildCreateUseCase {
+export interface Child{
+    id: string;
     name: string;
-    password: string;
-    age: number;
+    level: number;
+    coins: number;
+    taskNotCompleted: number,
+    taskCompleted: number
 }
 export interface ChildLogin{
     name: string;
@@ -31,15 +48,19 @@ export interface ChildUpdate {
 export interface ChildList {
     name: string;
     age: number;
+    level: number;
+    xp: number;
+    coins: number;
+    taskNotCompleted: number;
+    taskCompleted: number
     createdAt: Date;
     updatedAt: Date;
-    level: number;
 }
  export interface ChildRepository {
-    create(child: ChildCreate): Promise<Child>;
-    findById(id: string): Promise<Child | null>;
-    findByName(name: string): Promise<Child | null>;
-    findByParents(userId: string): Promise<Child[] | null>;
-    update(child: ChildUpdate): Promise<Child>;
+    create(child: ChildCreatedDB): Promise<ChildDb>;
+    findById(id: string): Promise<ChildDb | null>;
+    findByName(name: string): Promise<ChildDb | null>;
+    findByParents(userId: string): Promise<ChildDb[] | null>;
+    update(child: ChildUpdate): Promise<ChildDb>;
     delete(id: string): Promise<void>;
  }

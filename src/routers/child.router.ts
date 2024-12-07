@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { ChildCreateUseCase, ChildLogin, ChildUpdate } from "../interfaces/child.interface";
+import { ChildCreated, ChildLogin, ChildUpdate } from "../interfaces/child.interface";
 import { ChildUseCase } from "../useCases/child.usecase";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 
@@ -7,13 +7,13 @@ export async function ChildRouter(app: FastifyInstance) {
 
     const childUseCase = new ChildUseCase()
    
-      app.post<{  Params:{email:string} ,Body: ChildCreateUseCase }>('/children/signup',{preHandler:isAuthenticated}, async (req, reply) => {
+      app.post<{  Params:{email:string} ,Body: ChildCreated }>('/children/signup',{preHandler:isAuthenticated}, async (req, reply) => {
 
-          const { name,age,password} = req.body;
+          const dataBody = req.body;
           const { email } = req.params;
           try {
 
-            const data = await childUseCase.create({name,age,password},email);
+            const data = await childUseCase.create(dataBody,email);
             return reply.send(data);
 
           } catch (error) {
@@ -63,7 +63,7 @@ export async function ChildRouter(app: FastifyInstance) {
       app.delete<{ Params: { id: string }}>('/children/:id',{preHandler:isAuthenticated}, async (req, reply) => {
         const { id } = req.params;
         try {
- 
+
           const data = await childUseCase.delete(id);
           return reply.send(data);
         } catch (error) {

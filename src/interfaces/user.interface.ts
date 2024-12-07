@@ -8,6 +8,11 @@ export interface User{
     id: string;
     name: string;
     email: string;
+}
+export interface UserDB{
+    id: string;
+    name: string;
+    email: string;
     password: string;
 }
 export interface UserLogin{
@@ -21,7 +26,7 @@ export interface UserUpdate {
     password?: string;
 }
  export interface UserRepository {
-    create(user: UserCreate): Promise<User>;
-    findByEmail(email: string): Promise<User | null>;
-    update(user: UserUpdate): Promise<User>;
+    create(user: UserCreate): Promise<UserDB>;
+    findByEmail(email: string): Promise<UserDB | null>;
+    update(user: UserUpdate): Promise<UserDB>;
  }

@@ -5,8 +5,7 @@ import { TaskRouter } from "./routers/task.router";
 import { ChildRouter } from "./routers/child.router";
 import { TaskAnalysisRouter } from './routers/taskAnalysis.router';
 
-
-import { Adm } from "./routers/adm";
+import { Adm } from "./dev/adm";
 
 const app = fastify()
 app.register(Adm)

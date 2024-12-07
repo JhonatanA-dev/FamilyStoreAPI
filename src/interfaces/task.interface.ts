@@ -3,7 +3,7 @@ export interface TaskCreate {
     description: string;
     date: string;
     difficulty: number;
-    taskStatus: string;
+    coins: number;
     childId: string;
 }
 
@@ -14,6 +14,7 @@ export interface Task{
     date: string;
     difficulty: number;
     taskStatus: string;
+    coins: number;
     childId: string;
 }
 
@@ -24,9 +25,23 @@ export interface TaskUpdate {
     date?: string;
     level?: number;
     xp?: number;
+    coins?: number;
     difficulty?: number;
     taskStatus?: string;
     childId?: string;
+}
+
+export interface TaskUserUpdate {
+    id: string;
+    title?: string;
+    description?: string;
+    date?: string;
+    difficulty?: number;
+    taskStatus?: string;
+}
+export interface TaskChildUpdate {
+    id: string;
+    taskStatus: string;
 }
 
 export interface TaskList {
@@ -36,18 +51,15 @@ export interface TaskList {
     date: string;
     difficulty: number;
     taskStatus: string;
+    coins: number;
     createdAt: Date;
     updatedAt: Date;
     childId: string;
 }
 export interface TaskArrayList {
-    numberToDO:number,
     toDo:TaskList[],
-    numberInProgress:number,
     inProgress:TaskList[],
-    numberCompleted:number,
     completed:TaskList[],
-    numberNotCompleted:number,
     notCompleted:TaskList[]
 }
 

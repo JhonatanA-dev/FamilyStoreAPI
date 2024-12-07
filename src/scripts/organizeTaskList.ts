@@ -8,15 +8,7 @@ export function organizeTaskList(list: TaskList[]) {
     const completed    = list.filter(item => item.taskStatus === "completed")
     const notCompleted = list.filter(item => item.taskStatus === "notCompleted")
   
-    const taskList:TaskArrayList = {
-        numberToDO: toDo.length,
-        toDo,
-        numberInProgress: inProgress.length,
-        inProgress,
-        numberCompleted: completed.length,
-        completed,
-        numberNotCompleted: notCompleted.length,
-        notCompleted
-    }
+    const taskList:TaskArrayList = {toDo,inProgress,completed,notCompleted}
+    
     return taskList
 }
