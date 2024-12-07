@@ -1,5 +1,5 @@
 # API FamilyStore
- - [ ] test
+
 ## Rotas de mãe 
 | Rotas             | Metudo | Auteticação     | Description                  |
 | ----------------- | ------ | --------------- | ---------------------------- |
