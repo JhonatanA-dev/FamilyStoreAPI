@@ -22,7 +22,8 @@
 | ----------------- | ------ | --------------- | ---------------------------- | 
 | /task             | POST   | Sim token pais  | Criar   tarefa  dos filho.   |
 | /task/:taskId     | PUT    | Sim token pais  | Editar  tarefa  dos filho.   |
-| /task/:childId    | GET    | --------------- | Buscar  tarefas dos filho.   |
+| /task/:childId    | GET    | Sim token filho | Buscar  tarefas dos filho.   |
+| /task/status      | PUT    | Sim token pais  | Editar  status da tarefas.   |
 
 
 ### Rotas de Análise 
