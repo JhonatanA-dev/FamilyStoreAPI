@@ -70,9 +70,6 @@ class TaskAnalysisUseCase {
 
             const childUP = await this.childRepository.update(childData);
             if (!childUP) throw new Error("Filho não atualizado");
-            // Deletar tarefa concluida
-            const del = await this.taskRepository.delete(verifyTask.id);
-            if (!del) throw new Error("não foi possivel deletar a tarefa");
             return  {levelUP:data.levelUP}
         }
         

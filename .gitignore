@@ -2,7 +2,8 @@ node_modules
 prisma
 # Keep environment variables out of version control
 .env
-
+NOTE.md
+logica.js
 env.ts
 package-lock.json
 pnpm-lock.yaml

@@ -49,8 +49,14 @@ export async function UserRouter(app: FastifyInstance) {
       app.get<{Params:{email:string}}>('/user',{preHandler:isAuthenticated}, async (req, reply) => {
         const {email} = req.params 
         try {
+          if (email == undefined) {
+            throw Error("Usuario não autorisado ")
+          }
           const user = await userUseCase.findByEmail(email);
+      
           return reply.send(user);
+      
+
         } catch (error) {
           reply.send(error);
         }

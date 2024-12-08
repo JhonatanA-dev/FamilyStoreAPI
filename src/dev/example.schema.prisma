@@ -31,6 +31,7 @@ model Children {
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
   Task             Task []
+  Investments      Investments[]
   userId           String
   user             User   @relation(fields: [userId], references: [id])
   
@@ -50,4 +51,43 @@ model Task {
   children     Children   @relation(fields: [childId], references: [id])
 
   @@map("task")
+}
+model UserAdm {
+  id              String     @id @default(uuid())
+  name            String
+  email           String     @unique
+  password        String     @unique
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  InvestmentsAdm  InvestmentsAdm []
+
+  @@map("userAdm")
+}
+
+model InvestmentsAdm {
+  id                   String     @id @default(uuid())
+  name                 String
+  percentage           Int   
+  sharesLimit          Int    
+  sharesPurchased      Int    
+  valueOfShares        Int   
+  valueOfInitialShares Int   
+  totalinvested        Int    
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+  userId               String
+  userAdm             UserAdm   @relation(fields: [userId], references: [id])
+  @@map("investmentsAdm")
+}
+model Investments {
+  id                   String     @id @default(uuid())
+  idInvestment         String
+  name                 String
+  numberOfShares       Int   
+  amountPaid           Int  
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+  userId               String
+  children     Children   @relation(fields: [userId], references: [id])
+  @@map("investments")
 }

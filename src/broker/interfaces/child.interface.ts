@@ -44,7 +44,6 @@ export interface ChildUpdate {
     id: string;
     age?: number;
     password?: string;
-    coins?: number;
 }
 export interface ChildList {
     name: string;

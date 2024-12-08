@@ -1,0 +1,42 @@
+Investimento
+Valores investido 
+    Buscar na tabela InvestimentoHistorico os dados  ( titulo, Valor investido , data ) com as datas superior a datas atual
+Historico de renda
+    Buscar na tabela InvestimentoHistorico os dados ( titulo, Valor investido,Taxa ,Valor do rendimento. )
+
+
+Lista de investimentos
+Investimento criados pelo ADM 
+    Titulo  
+    Descrição    
+    Historico de rendimento dos ultimos mes  
+    Próxima data  para investir( 2 dias para investir) 
+
+Quando o filho investir a quantidade de coins da escola deles 
+
+    Verificar se já foi feito o investimento
+    Criar uma iten na tabela InvestimentoHistorico 
+        Id  do Investimento 
+        Titulo 
+        Descrição  
+        Valor investido
+        Data de devolusão
+        Lucro = 0
+        Taxa = 0
+        Id do filho
+
+Quando o filho resgatar
+
+    Buscar na tabela InvestimentoHistorico com o id do investimento
+        Data de devolusão
+        Valor investido
+    Buscar na tabela InvestimentoAdm
+        Valor do rendimento atual %
+        Taxa de desistência
+    Atualiza o item na tabela InvestimentoHistorico
+        Taxa de desistência
+        Valor do rendimento 
+
+    Somar os valores investido e rendimento
+    Se a data for menor que a data de devolução Subtraia pala taxa
+    Adicionar as moedas atuais do filho

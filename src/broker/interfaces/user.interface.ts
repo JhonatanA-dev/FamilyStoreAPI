@@ -27,7 +27,6 @@ export interface UserUpdate {
 }
  export interface UserRepository {
     create(user: UserCreate): Promise<UserDB>;
-    findById(id: string): Promise<UserDB | null>;
     findByEmail(email: string): Promise<UserDB | null>;
     update(user: UserUpdate): Promise<UserDB>;
  }

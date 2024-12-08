@@ -1,16 +1,16 @@
 import { FastifyInstance} from "fastify";
-import { UserUseCase } from "../useCases/user.usecase";
-import { UserCreate, UserLogin, UserUpdate } from "../interfaces/user.interface";
+import { UserAdmCreate, UserAdmLogin, UserAdmUpdate } from "../interfaces/userAdm.interface";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { UserAdmUseCase } from "../useCases/userAdm.usecase";
 
-export async function UserRouter(app: FastifyInstance) {
+export async function UserAdmRouter(app: FastifyInstance) {
 
-    const userUseCase = new UserUseCase()
+    const userAdmUseCase = new UserAdmUseCase()
 
-    app.post<{ Body: UserCreate }>('/user/signup', async (req, reply) => {
+    app.post<{ Body: UserAdmCreate }>('/userAdm/signup', async (req, reply) => {
         const { name, email, password} = req.body;
         try {
-          const created = await userUseCase.create({
+          const created = await userAdmUseCase.create({
             name,
             email,
             password,
@@ -21,21 +21,21 @@ export async function UserRouter(app: FastifyInstance) {
         }
       });
 
-      app.post<{ Body: UserLogin }>('/user/signin', async (req, reply) => {
+      app.post<{ Body: UserAdmLogin }>('/userAdm/signin', async (req, reply) => {
         const { email, password} = req.body;
         try {
-          const token = await userUseCase.login({email,password});
+          const token = await userAdmUseCase.login({email,password});
           return reply.send(token);
         } catch (error) {
           reply.send(error);
         }
       });
-      app.put<{Params:{email:string} ,Body: UserUpdate }>('/user/editProfile',{preHandler:isAuthenticated}, async (req, reply) => {
+      app.put<{Params:{email:string} ,Body: UserAdmUpdate }>('/editProfile',{preHandler:isAuthenticated}, async (req, reply) => {
 
         const { name, password } = req.body;
         const { email }= req.params
         try {
-          const data = await userUseCase.update({
+          const data = await userAdmUseCase.update({
             name,
             email,
             password,
@@ -46,10 +46,11 @@ export async function UserRouter(app: FastifyInstance) {
         }
       });
       
-      app.get<{Params:{email:string}}>('/user',{preHandler:isAuthenticated}, async (req, reply) => {
+      app.get<{Params:{email:string}}>('/userAdm',{preHandler:isAuthenticated}, async (req, reply) => {
         const {email} = req.params 
         try {
-          const user = await userUseCase.findByEmail(email);
+          if (email == undefined) throw Error("Usuario não autorisado ")
+          const user = await userAdmUseCase.findByEmail(email);
           return reply.send(user);
         } catch (error) {
           reply.send(error);

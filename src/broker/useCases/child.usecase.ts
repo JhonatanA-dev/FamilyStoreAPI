@@ -37,7 +37,7 @@ class ChildUseCase {
             name: child.name, 
             age: child.age,  
             password, 
-            level : 0, 
+            level : 1, 
             xp: 0, 
             coins:0 , 
             userId: userData.id,
