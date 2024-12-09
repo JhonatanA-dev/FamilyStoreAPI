@@ -1,4 +1,29 @@
 # API FamilyStore
+# A fazer na API
+
+----------------------------------------------------------------
+### Fluxo produtos
+
+- [ ] Receber ID do produto
+- [ ] Verificar se a moedas suficiente
+    - [ ] Se tiver
+        - [ ] Remover produto da lista 
+        - [ ] Notificar para os pais sopre a compra
+        - [ ] Remover moedas do filho
+    - [ ] Se não tiver 
+        - [ ] Notificar o filho da compra recusado 
+
+> [!NOTE]
+>  Para a criação dos produtos existem duas possibilidade.
+>  - Os produtos está ligado aos usuario porem iremos precisar criar a funcionalidade de upload de arquivo  ou utiliza serviços de terceiros.
+>  - Os produtos ser criado pelo ADM isso pode ser melhor pelo fato que as imagen utilizadas  podem ser otimizadas .
+
+### Carteira
+ 
+<br/>
+
+- [ ] Criar desconto nos produtos dependendo do nivel do filho
+
 ## Rotas de mãe 
 | Rotas             | Metudo | Auteticação     | Description                  |
 | ----------------- | ------ | --------------- | ---------------------------- |
